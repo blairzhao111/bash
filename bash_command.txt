@@ -1,0 +1,170 @@
+1.pwd
+  pwd -L logic path
+  pwd -P physical path
+
+2.cd 
+  cd ~OtherUser change directory to specified user's homepath
+                if you don't specify username, like cd ~, it works just like cd
+                which will take you directly to currently login user's homepath.
+  cd -  go back to previous visited directory
+
+3.ls
+  ls --all  list all contained files and subdirectories no matter it is hidden or not
+           which the ls -a is the abbrv for this command.
+  ls -F  to show the files' types: / is dirtectory, @ is a shortcut, * is executable
+  ls -r  list what ls command does in a reverse order
+  ls -R  list all files and files in subdirectories recursively 
+  man ls enter the manul entry for ls command, cheak for more information
+
+4.cat  stdin(keyboard as default) to stdout(shell terminal on screen as default) operation
+  cat filepath  now chang input from default keyboard to that file which given filepath is pointing to
+  cat file1 file2 cat can take multiple files as input and concatnate them together
+
+5.Redirection  means sending input or output to somewhere else rather than default(terminal screen)
+  >  just liek input > output, for example cat > test.txt. every time using > to redirect to a new output,
+     > will overwrite original contents in that file.
+  >> different from > overwritten the original contents, this command appends the input into output file.
+  you can use:
+  cat file1 >(>>) file2
+  cat file1 file2 file3 ... >(>>) file
+
+6.mkdir 
+  mkdir -p(--parents) can be used to create a directory hierachy, like mkdir -p blair/kevin/bob/nice
+  mkdir -p dirname/{subdirname1,subdirname2,.....} can be usd to create multiple subdirectories 
+
+7.rmdir  rm
+  rmdir -p allpath, for example, rmdir -p blair/kevin/lucky. It will start remove from the lowest one to the upper one.
+		    The removing process will stop if there is any directory not empty.
+		    So, you can only use this command to remove empty directory or empty directories structure.
+  rm -r(-R)  this command will recursively remove directories structure no matter it's empty or not. So use it with caution
+
+8.cp 
+  cp -i interactive, if cp command is going to overwrite an existing file, command line will ask you permission 
+  cp -R recursively copy, can be used in entire diectory copy, for example: cp -R dir1/ dir2/, in this case if dir2 doesn't exist before
+        cp will create a dir2 for you and copy contents in dir1 into dir2. But if dir2 is already existing, cp will copy dir1 into dir2 and mske it 
+        become a subdir of dir2.                                  
+  cp file1 file2 
+  cp file1 dir/
+  cp file1 file2 file3..... dir/
+  cp dir1/ dir2/
+
+9.mv
+  RENAME:
+  mv file1 file2  to rename the file1 into file2. If there is a file named file2 already existed. This operation will overwirte original 
+                  file2 contents by file1 contents. 
+  mv dir1/ dir2/  to rename dir1 into dir2, the prerequiste is that dir2 didn't exist before the action
+  MOVE:
+  mv file1 dir/   move file1 into dir directory.If there is a file named file1 already existed in that directory. This operation will overwirte original 
+                  file1 contents by the moving file1 contents. Also need to know if given directory doesn't exist, mv will not create that dir for you.
+  mv file1 file2 file3 ... dir/    move multiple files into given directory.
+  mv dir1/ dir2/  if dir2 exists, then the command will not perform rename operation, it will move dir1 into dir2 and make dir1 become a subdir to dir2
+  mv -i interactive, use this option can resolve previous name collision and overwrite problem, bash will warn you there is a name collision 
+                     and ask you permission to continue. Also is useful when on moving operation. Always use -i option for good sake.
+
+10.less  used to deal with large text file and search through the file, it's similar to more command but with more features. 
+         Also, cat is not good at dealing with large text field.
+
+11.file
+   file index.html 
+   file someducument will return you the information of the document, it will look inside the document(file) and determine the type and other stuffs as well.
+   Also, file command is not good at detect the source code.
+
+12.dealing with space in file name or directory name
+   1.use \(space) escape character to indicate bash you are passing a space,for exmaple: create an directory named program file, mkdir program\ file
+   2.there is another way to possible solve it by using auto complete, for exmaple: you want to cd to a subdir named awesome, just type: cd a(aw/awe/..)
+   and enter tab to finish auto complete. But this method sometimes doesn't work so well. For instance, if you also have a subdir called awe, when you 
+   use cd a (enter tab), bash will take you to awe instead of awesome, also it will block auto complete for awesome.	
+   3. using quote, like cd "program file".single and double quote will work both fine.
+	
+13.wildcard
+   ?  is a single one character position wildcard. can repalce any single character in the file name,even extension, for example: word.???
+   *  is a wildcard can represent any length(zero to multiple) of characters, for example: *.js
+
+14.wildcard character classes: these classes only take up one character position.
+   They are in form of [[:class:]], also it can be used as a negative way, like: [![:class:]], which means any thing except that class.
+   digit character class: [[:digit:]]
+   upper letter class: [[:upper:]]
+   lower letter class: [[:lower:]]
+   alphabet class: [[:alpha:]]
+   and other classes.....
+   Custom character class: [specificCharacter1specificCharacter2.....], for example: ls [1f] tells ls to list all files start with number 1 or letter f.
+   But remember classes only take up one character position, but you can use multiple classes,also can combine with wildcard: like [1f][pw]*[.]*
+
+15.head (default)typical used to print of the first ten lines of a file.
+   head file  :this command will print out the first ten lines in given file.
+   head -n (number of lines you want to print) :-n option means number, you can use this option with head command to print out custom number of lines 
+                                              you wish to print out, for example, head -n 3 file will print 3 lines from given file.
+   head -n -(number of lines you want to print) :this one is similar to the previous command,but instead of printing out the first specified lines from file,
+						it will print out all the lines from the beginning og the file except given number of lines from the last.
+                                                For exampel:there are 20 lines in your given file. Then, head -n -15 will print out only first five lines(20-15) 
+                                                from your file.
+   head -c (number of bytes): similar to previous,but -c option makes head print out given number of bytes rather than lines.
+   head -c -(number of bytes): similar to previous but with bytes.
+   head -v :will also print out the file's name
+   there are some suffix to represent large numbers. check more by type man head.
+
+16. pipes: | ,this command sends the output of a given command as the input of another given command, like: command1 | command2
+              For example, ls -lt | head
+
+17.sort file :alphabet-based sort,if you want in sorted result the upper case listed before lower case, change environment varibale to LC_ALL = c 
+   sort -r sort by reverse order
+   sort -R randomize
+   sort -f ignore the case
+   sort -s stable sort
+   sort -n sort in numerical order
+   sort -M for sorting months, this also works on abbrvation of months, like jan, nov....
+   sort multiple files contents: sort -options file1 file2 ....., it will combine and sort given files you passin by given order 
+   sort -o sort has its own output method, for example you can use: sort -options file1 file2 -o sortedresultfile. 
+           or you can simple use redirection to write sort result into your result file.
+
+18.uniq  remove adjacent duplicates, there is an important point to mention is that "adjacent", non-adjacent duplicates will not be removed.
+         To solve this problem, you can always use sort then pipes sorted result into uniq command to eliminate all duplicates.
+   uniq -c count number option, will remove adjacent duplicates and count each remaining item's number
+   uniq -d only list items having duplicates
+   uniq -u only list unique items
+           example sort file | uniq -dc
+
+19.file permission
+   long format meaning:
+   file permission,the number of links for the file,name of the owner of file,name of the group,file size,data file is modified,name of the file name
+   file permission syntax: r for read, w for write, x for execute
+   1 - means file  3 rw- 			  3 rw-			    3 r--
+   type indicator  permission for the file owner  permission for the group  permission for anybody else
+   Using chmod to change file's permission:
+   Method1: chmod u/g/o/a (+/-)r/w/x file
+         u:user(owner) g:group o:everyone else a:all(include u,g,o) +:add -:remove 
+   Method2: chmod u/g/o/a=??? file, put r/w/x into ?, like chmod u=rwx file
+   Change multiple: chmod u+rwx,g+rw,o+r file
+
+20.directory permission
+   similar to file, but directory type indicator is d. 
+   And read,write and execute permissions are important to directory, you can use these to control directory access.
+
+21.octal and numerical permission
+   R  W  X                               R  W  X                          R  W  X
+   4  2  1                               4  2  1                          4  2  1
+   1  1  1                               1  0  1                          1  0  0
+   RWX = 4 + 2 + 1 = 7                   R-X = 4 + 0 + 1 = 5              R-- = 4 + 0 + 0 = 4
+   If a file permission is like: -rw-rw-r-- , change its permission exactly like what it had before will be: chmod 774 file
+
+22.backticks(backquote): ` for command substitutions 
+   
+   
+   
+   
+
+
+
+
+
+find command
+   
+   
+   
+   
+
+
+  
+  
+
+  
