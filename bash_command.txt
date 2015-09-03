@@ -1,47 +1,95 @@
+
+Bash Scripting:
+Syntax:
+bash [options][files]
+Most options have shorthands,like -a/-A for --All and -v for --verbose or --version and so on. 
+
+Common commands:
 1.pwd
   pwd -L logic path
   pwd -P physical path
 
 2.cd 
+  /:root directory
+  ./:current directory
+  ../:parent directory of current directory
+  ~: is a shortcut for your(current user) home directory
+     typical your home directory's path will be /home/username/
   cd ~OtherUser change directory to specified user's homepath
                 if you don't specify username, like cd ~, it works just like cd
                 which will take you directly to currently login user's homepath.
   cd -  go back to previous visited directory
 
 3.ls
-  ls --all  list all contained files and subdirectories no matter it is hidden or not
-           which the ls -a is the abbrv for this command.
+  ls -a show dot hidden files
+  ls -A almost like -a except -A doesn't show ./ and ../
+  ls -l show in long format
+  ls -t list items by modified time 
+  ls -alth options can stick together
+  ls -h show files'size in human readable size in long-format
   ls -F  to show the files' types: / is dirtectory, @ is a shortcut, * is executable
   ls -r  list what ls command does in a reverse order
   ls -R  list all files and files in subdirectories recursively 
+  ls -d  show the information of current directories themselves rather than their contents.
   man ls enter the manul entry for ls command, cheak for more information
 
-4.cat  stdin(keyboard as default) to stdout(shell terminal on screen as default) operation
-  cat filepath  now chang input from default keyboard to that file which given filepath is pointing to
-  cat file1 file2 cat can take multiple files as input and concatnate them together
+4.cat  concatenates and outputs the contents of one or more files
+  cat :stdin(keyboard as default) to stdout(shell terminal on screen as default) 
+  cat filepath(filename) :now chang input from default keyboard(stdin) to given file which given filepath is pointing to, then prints contents to stdout.
+  cat file1 file2 :cat can take multiple files as input and concatnate them together, then to stdout.
 
-5.Redirection  means sending input or output to somewhere else rather than default(terminal screen)
-  >  just liek input > output, for example cat > test.txt. every time using > to redirect to a new output,
+5.Redirection  means changing input or output to somewhere else rather than the default(stdin,stdout,stderr....)
+In *nix systems, devices and peripherals are treated as files. Anytime you are in a shell, there are three files open by default in /dev/pts/ directory:
+   0. stdin - the keyboard, which is /dev/pts/0 in file form.
+   1. stdout - screen, which is /dec/pts/1 in file form.
+   2. stderr - error messages, which is /dec/pts/2 in form.
+The numbers are files discriptors, or pointers used by the OS to refer to opened files. The file descriptors and discriptor tables are specific to each command and normal 
+reset after the execution.
+
+Special devices in *nix systems:
+/dev/null :discard any inputs or redirectory 
+/dev/zero :infinite length zero file
+/dev/full:a file on a full disk
+/dev/random:sorce of entropy
+/dev/urandom:
+
+for example: grep "ssh" invalid_file > /dev/null 2>&1
+the preceeding & indicates this is a file descriptor rather than a filename. And order matters.
+
+  >  just like input > output, for example cat > test.txt. every time using > to redirect to a new output,
      > will overwrite original contents in that file.
+  For example: $ echo "Hello World" > hello.txt is a shorthand for $ echo "Hello World" 1> hello.txt
+
   >> different from > overwritten the original contents, this command appends the input into output file.
   you can use:
   cat file1 >(>>) file2
   cat file1 file2 file3 ... >(>>) file
 
-6.mkdir 
-  mkdir -p(--parents) can be used to create a directory hierachy, like mkdir -p blair/kevin/bob/nice
-  mkdir -p dirname/{subdirname1,subdirname2,.....} can be usd to create multiple subdirectories 
+  < :instead of output redirection, you also have input redirection. < operator allows commands to accept input from a file,
+     it's a shorthand way to write 0< and redirects stdin.
 
-7.rmdir  rm
-  rmdir -p allpath, for example, rmdir -p blair/kevin/lucky. It will start remove from the lowest one to the upper one.
+  tee file : tee read from stdin and writes to given file and stdout. Like echo "hello" | tee hi.txt
+             can be use to copy and see the contents of file in meanwhile, like tee file2 < file1.
+
+  xargs : used for taking the output of a command and supplying it as argument rather than input to another command,
+          the xargs utility builds an argument list from standard input, the find and grep is a common use.
+
+
+6.mkdir 
+  mkdir -p(--parents) can be used to create a directory hierachy, like $ mkdir -p blair/kevin/bob/nice
+  mkdir -p dirname/{subdirname1,subdirname2,3.....} can be usd to create multiple subdirectories, like $ mkdir -p blair/{good,nice,awesome} 
+
+7.rmdir and rm
+  rmdir is used to remove empty single directory. rm is used to remove files and dirs.
+  rmdir -p allpath, used to remove nested empty directories, for example, rmdir -p blair/kevin/lucky. It will start remove from the lowest one to the upper one.
 		    The removing process will stop if there is any directory not empty.
-		    So, you can only use this command to remove empty directory or empty directories structure.
+		    So, you can only use this command to remove empty directory or empty nested directories structure with option -p.
   rm -r(-R)  this command will recursively remove directories structure no matter it's empty or not. So use it with caution
 
 8.cp 
   cp -i interactive, if cp command is going to overwrite an existing file, command line will ask you permission 
   cp -R recursively copy, can be used in entire diectory copy, for example: cp -R dir1/ dir2/, in this case if dir2 doesn't exist before
-        cp will create a dir2 for you and copy contents in dir1 into dir2. But if dir2 is already existing, cp will copy dir1 into dir2 and mske it 
+        cp will create a dir2 for you and copy contents in dir1 into dir2. But if dir2 is already existing, cp will copy dir1 into dir2 and make it 
         become a subdir of dir2.                                  
   cp file1 file2 
   cp file1 dir/
@@ -61,12 +109,15 @@
   mv -i interactive, use this option can resolve previous name collision and overwrite problem, bash will warn you there is a name collision 
                      and ask you permission to continue. Also is useful when on moving operation. Always use -i option for good sake.
 
-10.less  used to deal with large text file and search through the file, it's similar to more command but with more features. 
-         Also, cat is not good at dealing with large text field.
+10.less  which is a pager, gives you a user-friendly way to large text.
+         used to deal with large text file and search through the file, it's similar to more command but with more features. 
+   common use commands in less:
+   <q>:quit , <space>:forward one window , <b>:backward one window , <d>:forward half window, <u>:backward half window, <G>:go to the last line, <g>go to the first line
+   </>:search , <?>:search backward , <n>:next occurence , <N>: previous occurence
 
 11.file
    file index.html 
-   file someducument will return you the information of the document, it will look inside the document(file) and determine the type and other stuffs as well.
+   file fileName.extension will return you the information of the document, it will look inside the document(file) and determine the type and other stuffs as well.
    Also, file command is not good at detect the source code.
 
 12.dealing with space in file name or directory name
@@ -91,7 +142,7 @@
    But remember classes only take up one character position, but you can use multiple classes,also can combine with wildcard: like [1f][pw]*[.]*
 
 15.head (default)typical used to print of the first ten lines of a file.
-   head file  :this command will print out the first ten lines in given file.
+   head file  :this command will print out the first 10 lines in given file.
    head -n (number of lines you want to print) :-n option means number, you can use this option with head command to print out custom number of lines 
                                               you wish to print out, for example, head -n 3 file will print 3 lines from given file.
    head -n -(number of lines you want to print) :this one is similar to the previous command,but instead of printing out the first specified lines from file,
@@ -103,7 +154,7 @@
    head -v :will also print out the file's name
    there are some suffix to represent large numbers. check more by type man head.
 
-16. pipes: | ,this command sends the output of a given command as the input of another given command, like: command1 | command2
+16. pipes: | ,this command takes the output(stdout) of a given command to the input(stdin) of another given command, like: command1 | command2
               For example, ls -lt | head
 
 17.sort file :alphabet-based sort,if you want in sorted result the upper case listed before lower case, change environment varibale to LC_ALL = c 
@@ -116,6 +167,7 @@
    sort multiple files contents: sort -options file1 file2 ....., it will combine and sort given files you passin by given order 
    sort -o sort has its own output method, for example you can use: sort -options file1 file2 -o sortedresultfile. 
            or you can simple use redirection to write sort result into your result file.
+   sort -u removes duplicutes
 
 18.uniq  remove adjacent duplicates, there is an important point to mention is that "adjacent", non-adjacent duplicates will not be removed.
          To solve this problem, you can always use sort then pipes sorted result into uniq command to eliminate all duplicates.
@@ -147,17 +199,120 @@
    RWX = 4 + 2 + 1 = 7                   R-X = 4 + 0 + 1 = 5              R-- = 4 + 0 + 0 = 4
    If a file permission is like: -rw-rw-r-- , change its permission exactly like what it had before will be: chmod 774 file
 
-22.backticks(backquote): ` for command substitutions 
-   
-   
-   
-   
+22.backticks(backquote): ` for command substitutions
+   wrap some commands into `` like `wrapped commands` and substitute wrapped as input argument of another command.
+   For example, gedit `grep -l "SomeText" *.txt` , commands wrapped in a pair of `` return the grep command's results, then substitutes the results into 
+   gedit command as argument.
+
+23.nested backticks: nested command substitutions just like russian dolls.
+   Because there is only one ` symbol, shell can't tell which pair a single ` belongs, so you need to use escape character to indicate that.
+   For exmaple: ping -c $((2 * `cat \`grep -l "someText" *.txt \` | wc -l`)) www.google.com
+   Using \`....\` to indicate this is a nested backticks.
+
+24.command substitution by $(), which $() is equal to ``
+   Another way to doing command substitution rather than using backticks is using $(), for example, $ gedit $(grep -l "sometext" *.txt)
+
+25.alias : used to replace group of commands or any built-in command in a custom way.
+   syntax: $ alias customName='contents you want your custom name to represent'
+   For example: $ alias ll="ls -l" or $ ping5='ping -c 5 www.google.com'
+   Also aliases can be removed, unalias syntax: $ unalias aliasName, for example: $ unalias ping5
+   Using $ alias to show all aliases you currently are having.
+   If you don't save your defined aliases, you aliases would only be available on that session.
+
+26.save alias
+   save you aliases in .bash_profile or .bashrc. .bash_profile is for login shell and .bashrc is for interactively non-login shell.
+   you can use echo "alias custName='be aliased'" >> ~/.bash_profile or ~/.bashrc ,also just cat appending into it.
+   It's a good practice to use a separate .bash_aliases file to store all your aliases in case of you might mistake to use > instead >> and wipe of 
+   the entire config file contents.
+
+27.Redirect terminal output to another terminal
+   Using tty to see what current terminal is.
+
+28.ln  ln creates links(shortcuts) between files 
+   -s creates sysbolic links
+   there are two kinds of links,one is symbolic and another is hard link, the differecve is symbolic link is a reference to the file and 
+   hard link is a reference is a reference to the actual physical storage location. Always try to use symbolic links.
+
+29.find  the find command recursively locates files in a directory tree. It doesn't search the contents of the files, it just lets you find files themselves.
+   The syntax is: find startingPoint expression
+   -name specify the file's name, if you is going to use wildcard, quotes must be used.
+   For example: find /home -name '.bash*' or find ./ -name '*.txt'
+   -type specify the type, like f is to search for files.
+   -exec plays actions on your find results
+   like: find ./ -type f -exec ls -lh {} \;   {} is a placeholder for the filename, it will be substituated and terminate the command with \;
+   if you command is intentional broken into multiple lines, then use \ to continue the lines
+
+30.job control
+   Append & to any command to run it in the background.
+   Use fg to bring the last backgrounded job to the foreground.
+   use jobs to list all the backgrounded jobs.
+   Ctrl + Z to suspend the job and use bg to send it to the background 
+
+   ps shows a list of running processes, typical will show the processes owned by the current user.
+   ps -ef : -e selects all the processes -f shows more columns
+   kill PID : kill terminates a process, PID is the id number for that process, can be gathered from ps or elsewhere.
+   pgrep processName : search a process by name and return its pid. Like pgrep bash
+   pkill processName : terminate any process which matches given name 
+
+31.grep : grep searches one or more files for a pattern 
+   syntax: grep option pattern file
+   -i : makes the search case-insensitive
+   -v : reverses the search, showing the non-matching lines.
+   -l : only print the filename with matches
+   -o : only prints the matching parts
+   -C : prints lines of context around the matches
+   -E : enables the regular expression
+
+32.
+OTHER
+use ; to separate commands.
+use # to comment.
+use tab to automate completion, if there is any ambiguous, tab twice will give you all the candidates
+use Ctrl + R to search through previous commands you have entered.
+
+!*,!$,and !^ are the all,last,and first arguments of previous command
+brace expansion: explore all possible combinations, like $ echo {r,p,s}{r,p,s}{r,p,s} will give you back all ??? 
+possible combinations of letter r,p,and s.
+!!:last command
+!string:last command starting with string
+!?string:last command containing that string
+^cat^meow:replace cat with meow in last command
+fc:bring your last command into an editor
+
+man command : show you manual page of given command
+man -k keyword : -k allows you searching for keywords across mutliple pages, like man -k editor
+man pages have sections, sometimes you need add section number to specify which one you want to go,
+like $ man 5 crontab, or you can use $ man -a crontab, which will give you all the matching sections on succession.
+
+info command: similar to man but gives you more information, usually core utilities, like info coreutils
+
+which command : shows the full path of your command. Like $ which node will give you full path of your node, it's useful when you have different versions installed.
+
+echo command: prints to the terminal
+-n : suppresses the newline at the end
+-e : enables backslash escape charachers interpertation
+
+touch file : if the file doesn't exist, touch command creates an blank file. It just updates the access and modification time if given file already exists.
+
+wc counts the characters,words,or lines in a file, -l specifies a line count.
+wc file
+
+tail file: tail shows the end of a file and takes a number of lines argument just like head
+-n numberOfLines : will return given number of lines from the end of that file.
+-f : the -f argument outputs appended data in the real time. Means follow
+-c : similar as head, character.
+
+cut -d':' -f1/etc/passwd
+cut removes sections of the files
+-d is the delimiter to use 
+-f specifies which fields to output,this argument accepts ranges of fields,these are all valid:1-,-4,2-4
 
 
 
 
 
-find command
+
+
    
    
    
