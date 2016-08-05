@@ -1,7 +1,10 @@
+This file contains two sections. First part lists commonly used shell commands and their options. Second part talks about shell scripting.
 
-Bash Scripting:
-Syntax:
-bash [options][files]
+Part One: 
+Bash Shell Command:
+
+Basic Syntax:
+Command [options] [arguments] 
 Most options have shorthands,like -a/-A for --All and -v for --verbose or --version and so on. 
 
 Common commands:
@@ -15,23 +18,30 @@ Common commands:
   ../:parent directory of current directory
   ~: is a shortcut for your(current user) home directory
      typical your home directory's path will be /home/username/
-  cd ~OtherUser change directory to specified user's homepath
+  commmon usage:
+  	cd [relative path]
+  	cd [absolute path]
+  special cases:
+  	cd: goes back to current user's home directory
+  	cd ~: works identically as cd.
+  	cd ~OtherUser changes directory to specified user's homepath
                 if you don't specify username, like cd ~, it works just like cd
-                which will take you directly to currently login user's homepath.
-  cd -  go back to previous visited directory
+                which will take you directly to currently logined user's homepath.
+  	cd -  goes back to previous visited directory
 
 3.ls
-  ls -a show dot hidden files
-  ls -A almost like -a except -A doesn't show ./ and ../
-  ls -l show in long format
-  ls -t list items by modified time 
+  ls -a(--all)  show dot hidden files
+  ls -A  almost like -a except -A doesn't show ./ and ../
+  ls -l  show in long format
+  ls -t  sort results by modified time 
   ls -alth options can stick together
-  ls -h show files'size in human readable size in long-format
-  ls -F  to show the files' types: / is dirtectory, @ is a shortcut, * is executable
-  ls -r  list what ls command does in a reverse order
+  ls -h(--human-readable)  show files'size in human readable size in long-format
+  ls -F(--classify) show the files' types: / is dirtectory, @ is a shortcut, * is executable
+  ls -r(--reverse)  list what ls command does in a reverse order
   ls -R  list all files and files in subdirectories recursively 
-  ls -d  show the information of current directories themselves rather than their contents.
-  man ls enter the manul entry for ls command, cheak for more information
+  ls -d(--directory)  show the information of current directories themselves rather than their contents.
+  ls -S  Sort results by file size.
+  man ls enter the manul entry for ls command, cheak for more information.
 
 4.cat  concatenates and outputs the contents of one or more files
   cat :stdin(keyboard as default) to stdout(shell terminal on screen as default) 
@@ -76,38 +86,62 @@ the preceeding & indicates this is a file descriptor rather than a filename. And
 
 
 6.mkdir 
+  Common usage:
+  	mkdir dir1: create a single directory
+  	mkdir dir1 dir2 dir3 ...:create multiple directories at the same time
+
+  Options:
   mkdir -p(--parents) can be used to create a directory hierachy, like $ mkdir -p blair/kevin/bob/nice
   mkdir -p dirname/{subdirname1,subdirname2,3.....} can be usd to create multiple subdirectories, like $ mkdir -p blair/{good,nice,awesome} 
 
+
 7.rmdir and rm
   rmdir is used to remove empty single directory. rm is used to remove files and dirs.
-  rmdir -p allpath, used to remove nested empty directories, for example, rmdir -p blair/kevin/lucky. It will start remove from the lowest one to the upper one.
-		    The removing process will stop if there is any directory not empty.
-		    So, you can only use this command to remove empty directory or empty nested directories structure with option -p.
-  rm -r(-R)  this command will recursively remove directories structure no matter it's empty or not. So use it with caution
+
+  rmdir -p allpath, used to remove nested empty directories, for example, rmdir -p blair/kevin/lucky. It will start remove from the lowest one to the upper one.The removing process will stop if there is any directory not empty. So, you can only use this command to remove empty directory or empty nested directories structure with option -p.
+
+  rm -r(-R): this command will recursively remove directories structure no matter it's empty or not. So use it with caution.
+
+  rm -i --interactive: should be used all the time before you do any rm.
+
+  rm -f --force: ignore nonexistent files and do not prompt.
+
+  rm -v --verbose
+
 
 8.cp 
-  cp -i interactive, if cp command is going to overwrite an existing file, command line will ask you permission 
-  cp -R recursively copy, can be used in entire diectory copy, for example: cp -R dir1/ dir2/, in this case if dir2 doesn't exist before
-        cp will create a dir2 for you and copy contents in dir1 into dir2. But if dir2 is already existing, cp will copy dir1 into dir2 and make it 
-        become a subdir of dir2.                                  
-  cp file1 file2 
-  cp file1 dir/
-  cp file1 file2 file3..... dir/
-  cp dir1/ dir2/
+  Common usage:
+  	cp file1 file2 
+  	cp file1 dir/
+  	cp file1 file2 file3..... dir/
+  	cp dir1/ dir2/
+
+  Options:
+  cp -a --archive, copy files/directories and all of their attributes, like ownership and permission.
+  cp -i --interactive, if cp command is going to overwrite an existing file, command line will ask for your permission.
+  cp -r --recursive, can be used in entire directory recursive copy, for example: cp -R dir1/ dir2/, in this case if dir2 doesn't exist before, cp will create a dir2 for you and copy contents in dir1 into dir2. But if dir2 is already existing, cp will copy dir1 into dir2 and make it become a subdir of dir2.
+  cd -u --update, copy only non-existing and newer files from target directory to destination directory.
+  cd -v --verbose 
+
 
 9.mv
-  RENAME:
-  mv file1 file2  to rename the file1 into file2. If there is a file named file2 already existed. This operation will overwirte original 
-                  file2 contents by file1 contents. 
-  mv dir1/ dir2/  to rename dir1 into dir2, the prerequiste is that dir2 didn't exist before the action
-  MOVE:
-  mv file1 dir/   move file1 into dir directory.If there is a file named file1 already existed in that directory. This operation will overwirte original 
-                  file1 contents by the moving file1 contents. Also need to know if given directory doesn't exist, mv will not create that dir for you.
-  mv file1 file2 file3 ... dir/    move multiple files into given directory.
-  mv dir1/ dir2/  if dir2 exists, then the command will not perform rename operation, it will move dir1 into dir2 and make dir1 become a subdir to dir2
-  mv -i interactive, use this option can resolve previous name collision and overwrite problem, bash will warn you there is a name collision 
-                     and ask you permission to continue. Also is useful when on moving operation. Always use -i option for good sake.
+  Rename usage:
+  mv file1 file2: to rename the file1 into file2. If there is a file named file2 already existed. This operation will overwirte original file2 contents by file1 contents. 
+
+  mv dir1/ dir2/: to rename dir1 into dir2, the prerequiste is that dir2 didn't exist before the action.
+
+  Move usage:
+  mv file1 dir/: move file1 into dir directory.If there is a file named file1 already existed in that directory. This operation will overwirte original file1 contents by the moving file1 contents. Also need to know if given directory doesn't exist, mv will not create that dir for you.
+
+  mv file1 file2 file3 ... dir/: move multiple files into given directory.
+
+  mv dir1/ dir2/: if dir2 exists, then the command will not perform rename operation, it will move dir1 into dir2 and make dir1 become a subdir to dir2
+
+  Options:
+  mv -i --interactive: use this option can resolve previous name collision and overwrite problem, bash will warn you there is a name collision and ask you permission to continue. Also is useful when on moving operation. Always use -i option for good sake.
+  mv -u --update: move only files that either don't exist in the desitination directory or are newer than the existing corresponding files in the destination directory.
+  mv -v --verbose
+
 
 10.less  which is a pager, gives you a user-friendly way to large text.
          used to deal with large text file and search through the file, it's similar to more command but with more features. 
@@ -116,6 +150,7 @@ the preceeding & indicates this is a file descriptor rather than a filename. And
    </>:search , <?>:search backward , <n>:next occurence , <N>: previous occurence
 
 11.file
+   used to determine given file's type
    file index.html 
    file fileName.extension will return you the information of the document, it will look inside the document(file) and determine the type and other stuffs as well.
    Also, file command is not good at detect the source code.
@@ -130,6 +165,8 @@ the preceeding & indicates this is a file descriptor rather than a filename. And
 13.wildcard
    ?  is a single one character position wildcard. can repalce any single character in the file name,even extension, for example: word.???
    *  is a wildcard can represent any length(zero to multiple) of characters, for example: *.js
+   [character set]: [abc].text
+   [number set]: file[0-9][0-9][0-9]
 
 14.wildcard character classes: these classes only take up one character position.
    They are in form of [[:class:]], also it can be used as a negative way, like: [![:class:]], which means any thing except that class.
@@ -263,7 +300,11 @@ the preceeding & indicates this is a file descriptor rather than a filename. And
    -C : prints lines of context around the matches
    -E : enables the regular expression
 
-32.
+32. ln : create either hard links or symbolic links.
+	ln file link : to create a hard link.
+	ln -s item link : tocreate a symbolic link, where item is either a file or a directory.
+
+33.
 OTHER
 use ; to separate commands.
 use # to comment.
